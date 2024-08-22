@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.input-check {
+    @apply w-6 h-6 cursor-pointer bg-transparent border border-solid border-[#6C63FF];
+}
+
+.todo-item {
+    @apply flex max-w-[550px] justify-between items-center gap-5 my-5
+}
+
+.todo-text {
+    @apply flex justify-between items-center gap-5
+}
+
+.todo-title {
+    @apply text-lg
+}
+
+.todo-action {
+    @apply flex justify-between items-center gap-3
+}
+
+.todo-completed {
+    @apply line-through text-gray-400
+}
+
+.todo-delete, .todo-edit {
+    @apply cursor-pointer
+}
+
+.nothing {
+    @apply flex justify-center mx-auto my-10
+}
+
+.close {
+    @apply absolute right-5 top-2 text-2xl cursor-pointer
+}
+
+.modal-title {
+    @apply text-2xl
+}
+
+.modal-content {
+    @apply flex flex-col items-center justify-center gap-5
+}
+
+.modal-btn-div {
+    @apply flex w-full justify-between items-center mt-20
+}
+
+.modal-input {
+    @apply w-96 p-2 text-xl
+}
+
+.modal-cancel {
+    @apply bg-transparent text-[#6C63FF] font-semibold py-2 px-4 border border-solid border-[#6C63FF] rounded
+}
+
+.modal-apply {
+    @apply bg-[#6C63FF] text-white font-semibold py-2 px-4 border border-solid border-[#6C63FF] rounded
+}
+.modal-delete{
+    @apply bg-[#e24141] text-white font-semibold py-2 px-4 border border-solid border-[#e24141] rounded
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./src/output.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./src/img/favicon.png">
+    <title>Todo List</title>
+</head>
+
+<body class="bg-white dark:bg-[#252525] text-black dark:text-white">
+    <main>
+        <div class=" max-w-[750px] mx-auto py-10">
+            <h1 class='text-black text-4xl font-kanit text-center dark:text-white'>TODO LIST</h1>
+            <div class="flex justify-center items-center max-w-[750px] gap-6 relative mt-4">
+                <input type="text" placeholder="Search note..." id="search-input"
+                    class="border-[#6C63FF]  bg-transparent border-solid border w-[505px] rounded h-[38px] pl-3">
+                <img src="./src/img/search-icon.png" alt="search-icon" id="search-img"
+                    class="w-5 h-5 cursor-pointer absolute right-56">
+                <select class="bg-[#6C63FF] py-1.5 text-white max-w-[85px] px-1 rounded cursor-pointer" id="select">
+                    <option class="bg-white text-black" value="all">All</option>
+                    <option class="bg-white text-black" value="complete">Complete</option>
+                    <option class="bg-white text-black" value="incomplete">Incomplete</option>
+                </select>
+                <div class="bg-[#6C63FF] rounded cursor-pointer" id="theme-toggle">
+                    <img src="./src/img/moon-icon.png" alt="moon-icon" class="w-9 h-9" id="theme-icon">
+                </div>
+            </div>
+            <div id="todo-list" class="max-w-[525px] mx-auto my-10">
+
+            </div>
+            <div id="add-btn" class="flex justify-end  mt-10">
+                <img src="./src/img/add-icon.png" class="cursor-pointer" id="add-img" alt="add-icon">
+            </div>
+        </div>
+        <div class="bg-white dark:bg-[#252525] rounded-2xl max-w-[500px] hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-12 py-5 border border-solid border-black dark:border-white"
+            id="modal-div">
+            <div class="modal-content">
+                <span class="close hover:text-red-700">&#10005</span>
+                <h1 class="modal-title"></h1>
+                <input type="text"
+                    class="modal-input bg-transparent border border-solid dark:border-white border-black rounded">
+                <div class="modal-btn-div">
+                    <button class="modal-cancel">Cancel</button>
+                    <!-- <button class="modal-apply">Apply</button> -->
+                </div>
+            </div>
+        </div>
+        <!-- <div class="bg-white dark:bg-[#252525] rounded-2xl max-w-[500px] hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-12 py-5 border border-solid border-black dark:border-white"
+            id="modal-delete">
+            <div class="modal-content">
+                <span id="close" class="close hover:text-red-700">&#10005</span>
+                <h1 class="modal-title">Delete this Note?</h1>
+                <div class="flex justify-between items-center w-full gap-10">
+                    <button class="modal-cancel" id="modal-cancel">Cancel</button>
+                    <button class="modal-delete">Delete</button>
+                </div>
+            </div>
+        </div> -->
+    </main>
+    <script src="./script.js"></script>
+</body>
+
+</html>
