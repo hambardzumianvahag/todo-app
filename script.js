@@ -33,6 +33,7 @@ const modalInput = document.querySelector(".modal-input");
 const modalbtnDiv = document.querySelector(".modal-btn-div");
 const modalCancel = document.querySelector(".modal-cancel");
 const modalApply = document.querySelector(".modal-apply");
+// let data = [];
 
 // Modal Apply Button
 
@@ -43,15 +44,61 @@ function clearApplyButton() {
   }
 }
 
-//
+function printTodo(list) {
+  todoList.innerHTML = "";
+  list.forEach((item) => {
+    const todoItem = document.createElement("div");
+    const todoText = document.createElement("div");
+    const todoAction = document.createElement("div");
+    const todoInput = document.createElement("input");
+    const todoTitle = document.createElement("p");
+    const todoEdit = document.createElement("img");
+    const todoDelete = document.createElement("img");
+    const hr = document.createElement("hr");
+    todoItem.className = "todo-item";
+    todoText.className = "todo-text";
+    todoAction.className = "todo-action";
+    todoInput.className = "input-check";
+    todoTitle.className = "todo-title";
+    todoEdit.className = "todo-edit";
+    todoDelete.className = "todo-delete";
+    todoTitle.innerHTML = item.title;
+    // checkbox
+    todoInput.type = "checkbox";
+    todoInput.checked = item.completed;
+    if (todoInput.checked) {
+      todoTitle.classList.add("todo-completed");
+    }
+    todoInput.addEventListener("click", () => {
+      item.completed = todoInput.checked;
+      if (todoInput.checked) {
+        todoTitle.classList.add("todo-completed");
+      } else {
+        todoTitle.classList.remove("todo-completed");
+      }
+    });
+    //
 
-// fetching data
+    todoEdit.src = "./src/img/edit-icon.png";
+    todoDelete.src = "./src/img/delete-icon.png";
 
-function fetchTodo() {
+    todoList.appendChild(todoItem);
+    todoItem.appendChild(todoText);
+    todoItem.appendChild(todoAction);
+    todoItem.after(hr);
+    todoText.appendChild(todoInput);
+    todoText.appendChild(todoTitle);
+    todoAction.appendChild(todoEdit);
+    todoAction.appendChild(todoDelete);
+  });
+  editTodo();
+  deleteTodo();
+}
+
+function showTodo() {
   fetch("https://jsonplaceholder.typicode.com/todos?_limit=30")
-    .then((response) => response.json())
-    .then((todos) => {
-      function displayTodos(todos) {
+    .then((response) =>
+      response.json().then((todos) => {
         todoList.innerHTML = "";
         // no data available image
         if (todos.length === 0) {
@@ -62,198 +109,213 @@ function fetchTodo() {
           todoList.appendChild(noTodoImg);
           return;
         }
-        //
-        // todo items
-        todos.forEach((item, index) => {
-          const todoItem = document.createElement("div");
-          const todoText = document.createElement("div");
-          const todoAction = document.createElement("div");
-          const todoInput = document.createElement("input");
-          const todoTitle = document.createElement("p");
-          const todoEdit = document.createElement("img");
-          const todoDelete = document.createElement("img");
-          const hr = document.createElement("hr");
-          todoItem.className = "todo-item";
-          todoText.className = "todo-text";
-          todoAction.className = "todo-action";
-          todoInput.className = "input-check";
-          todoTitle.className = "todo-title";
-          todoEdit.className = "todo-edit";
-          todoDelete.className = "todo-delete";
-          todoTitle.innerHTML = item.title;
-          // checkbox
-          todoInput.type = "checkbox";
-          todoInput.checked = item.completed;
-          if (todoInput.checked) {
-            todoTitle.classList.add("todo-completed");
-          }
-          todoInput.addEventListener("click", () => {
-            item.completed = todoInput.checked;
-            if (todoInput.checked) {
-              todoTitle.classList.add("todo-completed");
-            } else {
-              todoTitle.classList.remove("todo-completed");
-            }
-          });
-          //
+        printTodo(todos);
+      })
+    )
+    .catch((err) => {
+      console.error(err);
+    });
+}
+showTodo();
 
-          todoEdit.src = "./src/img/edit-icon.png";
-          todoDelete.src = "./src/img/delete-icon.png";
+// Search
 
-          // Editing
+const searchBtn = document.querySelector("#search-img");
 
-          todoEdit.addEventListener("click", () => {
-            clearApplyButton();
-            const modalApply = document.createElement("button");
-            modalApply.className = "modal-apply";
-            modalApply.innerText = "Apply Edit";
-            modalbtnDiv.appendChild(modalApply);
-            modalDiv.style.display = "block";
-            modalTitle.innerText = "Change Your Note";
-            modalInput.value = item.title;
-            modalApply.onclick = () => {
-              item.title = modalInput.value;
-              modalInput.value = "";
-              modalDiv.style.display = "none";
-              displayTodos(todos);
-            };
-          });
-          //
-          //Deleting
-          todoDelete.addEventListener("click", () => {
-            todos.splice(index, 1);
-            displayTodos(todos);
-          });
-          //
-          todoList.appendChild(todoItem);
-          todoItem.appendChild(todoText);
-          todoItem.appendChild(todoAction);
-          todoItem.after(hr);
-          todoText.appendChild(todoInput);
-          todoText.appendChild(todoTitle);
-          todoAction.appendChild(todoEdit);
-          todoAction.appendChild(todoDelete);
-        });
+searchBtn.addEventListener("click", () => {
+  searchInput.focus();
+});
+
+const searchInput = document.querySelector("#search-input");
+
+// debounce
+
+const debounce = (callback, waitTime) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback(...args);
+    }, waitTime);
+  };
+};
+
+const searchTodo = (event) => {
+  fetch(
+    `https://jsonplaceholder.typicode.com/todos?title_like=${event.target.value.toLowerCase()}&_limit=10`
+  )
+    .then((response) => response.json())
+    .then((todos) => {
+      todoList.innerHTML = "";
+      if (todos.length === 0) {
+        const noTodoImg = document.createElement("img");
+        noTodoImg.className = "nothing";
+        noTodoImg.src = "./src/img/notodo-img.png";
+        noTodoImg.alt = "no Available";
+        todoList.appendChild(noTodoImg);
+        return;
       }
-      displayTodos(todos);
+      printTodo(todos);
+    });
+};
 
-      // Search
-      const searchBtn = document.querySelector("#search-img");
-      const searchInput = document.querySelector("#search-input");
-      searchBtn.addEventListener("click", () => {
-        searchInput.focus();
+searchInput.addEventListener("input", debounce(searchTodo, 1000));
+
+// Select
+
+const select = document.querySelector("#select");
+select.addEventListener("change", () => {
+  if (select.value === "incomplete") {
+    fetch(
+      "https://jsonplaceholder.typicode.com/todos?completed=false&_limit=10"
+    )
+      .then((response) => response.json())
+      .then((todos) => {
+        todoList.innerHTML = "";
+        printTodo(todos);
       });
-
-      // debounce
-
-      const debounce = (callback, waitTime) => {
-        let timer;
-        return (...args) => {
-          clearTimeout(timer);
-          timer = setTimeout(() => {
-            callback(...args);
-          }, waitTime);
-        };
-      };
-
-      const handleSearch = (event) => {
-        const value = event.target.value.toLowerCase();
-        const filteredTodos = todos.filter((todo) =>
-          todo.title.toLowerCase().includes(value)
-        );
-        displayTodos(filteredTodos);
-      };
-
-      searchInput.addEventListener("input", debounce(handleSearch, 300));
-
-      //
-
-      //Select functionality
-
-      const select = document.querySelector("#select");
-      select.addEventListener("change", () => {
-        if (select.value === "incomplete") {
-          const filteredTodos = todos.filter(
-            (todo) => todo.completed === false
-          );
-          displayTodos(filteredTodos);
-        } else if (select.value === "complete") {
-          const filteredTodos = todos.filter((todo) => todo.completed === true);
-          displayTodos(filteredTodos);
-        } else {
-          displayTodos(todos);
-        }
+  } else if (select.value === "complete") {
+    fetch("https://jsonplaceholder.typicode.com/todos?completed=true&_limit=10")
+      .then((response) => response.json())
+      .then((todos) => {
+        todoList.innerHTML = "";
+        printTodo(todos);
       });
+  } else {
+    showTodo();
+  }
+});
 
-      //
+// Edit
 
-      // addTodo
-
-      addTodo.addEventListener("click", () => {
-        clearApplyButton();
-        const modalApply = document.createElement("button");
-        modalApply.className = "modal-apply";
-        modalApply.innerText = "Apply";
-        modalbtnDiv.appendChild(modalApply);
-
-        modalDiv.style.display = "block";
-        modalDiv.style.display = "block";
-        modalInput.placeholder = "Input your note...";
-        modalTitle.innerText = "New Note";
-
-        modalApply.addEventListener("click", () => {
-          searchInput.value = "";
-          addNewTodo();
-        });
-      });
-
-      //
-
-      // modal close,cancel
-
-      close.addEventListener("click", () => {
-        modalDiv.style.display = "none";
-      });
-
-      modalCancel.addEventListener("click", () => {
-        modalDiv.style.display = "none";
-      });
-
-      //
-
-      //addTodo
-
-      function addNewTodo() {
-        const newTodo = {
-          completed: false,
-          userId: 3,
-          title: modalInput.value,
-        };
-        fetch("https://jsonplaceholder.typicode.com/todos", {
-          method: "POST",
+function editTodo() {
+  const todoItem = document.querySelectorAll(".todo-item");
+  let editImg;
+  for (let i = 0; i < todoItem.length; i++) {
+    const item = todoItem[i];
+    editImg = item.childNodes[1].childNodes[0];
+    editImg.addEventListener("click", () => {
+      clearApplyButton();
+      const modalApply = document.createElement("button");
+      modalApply.className = "modal-apply";
+      modalApply.innerText = "Apply Edit";
+      modalbtnDiv.appendChild(modalApply);
+      modalDiv.style.display = "block";
+      modalTitle.innerText = "Change Your Note";
+      modalInput.value = item.childNodes[0].childNodes[1].textContent;
+      modalApply.onclick = () => {
+        fetch(`https://jsonplaceholder.typicode.com/todos/${i + 1}`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(newTodo),
+          body: JSON.stringify({
+            ...item,
+            title: modalInput.value,
+          }),
         })
           .then((response) => response.json())
-          .then((data) => {
-            todos.push(data);
-            modalInput.value = "";
-            modalDiv.style.display = "none";
-            updateTodoList();
+          .then((todo) => {
+            fetch("https://jsonplaceholder.typicode.com/todos?_limit=30")
+              .then((response) => response.json())
+              .then((todos) => {
+                todos.forEach((item) => {
+                  if (item.id === todo.id) {
+                    item.title = todo.title;
+                  }
+                });
+                printTodo(todos);
+              });
           });
-      }
-      //
 
-      // Update
-
-      function updateTodoList() {
-        displayTodos(todos);
-      }
-      //
-    })
-    .catch((err) => console.error(err));
+        modalInput.value = "";
+        modalDiv.style.display = "none";
+      };
+    });
+  }
 }
 
-fetchTodo();
+// Delete
+
+function deleteTodo() {
+  const todoItem = document.querySelectorAll(".todo-item");
+  let deleteImg;
+  for (let i = 0; i < todoItem.length; i++) {
+    const item = todoItem[i];
+    deleteImg = item.childNodes[1].childNodes[1];
+    deleteImg.addEventListener("click", () => {
+      fetch(`https://jsonplaceholder.typicode.com/todos/${i + 1}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            item.remove();
+          } else {
+            console.error("Fail");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+  }
+}
+
+close.addEventListener("click", () => {
+  modalDiv.style.display = "none";
+});
+
+modalCancel.addEventListener("click", () => {
+  modalDiv.style.display = "none";
+});
+
+// Add
+
+addTodo.addEventListener("click", () => {
+  clearApplyButton();
+  const modalApply = document.createElement("button");
+  modalApply.className = "modal-apply";
+  modalApply.innerText = "Apply";
+  modalbtnDiv.appendChild(modalApply);
+  modalInput.value = "";
+  modalDiv.style.display = "block";
+  modalDiv.style.display = "block";
+  modalInput.placeholder = "Input your note...";
+  modalTitle.innerText = "New Note";
+
+  modalApply.addEventListener("click", () => {
+    searchInput.value = "";
+    addNewTodo();
+  });
+});
+
+//addTodo
+
+function addNewTodo() {
+  const newTodo = {
+    completed: false,
+    userId: 3,
+    title: modalInput.value,
+  };
+  fetch("https://jsonplaceholder.typicode.com/todos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newTodo),
+  })
+    .then((response) => response.json())
+    .then((todos) => {
+      fetch("https://jsonplaceholder.typicode.com/todos?_limit=30")
+        .then((response) => response.json())
+        .then((data) => {
+          data.push(todos);
+          printTodo(data);
+        });
+      modalInput.value = "";
+      modalDiv.style.display = "none";
+    });
+}
+
+// checkere actionic heto nuynna mnum
+// edit, add menak mihata linum anel, 2 tarber elementner poxel chi linum
